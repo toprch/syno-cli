@@ -57,6 +57,18 @@ Commands:
     Unlock an encrypted volume
 ```
 
+## Proper usage with unix pass, gopass and summon 
+
+```
+# Add summon manually or with brew
+brew tap cyberark/tools
+brew install summon
+
+# Prepare unix pass, gopass and add token user, here 'local/synology_token_user' 
+summon -p gopass --yaml 'SYNO_PASSWORD: !var local/synology_token_user' bash -c 'syno-cli list'
+
+```
+
 ### JSON format for batch unlock
 
 It's just an array of objects with a name and a password attribute:
