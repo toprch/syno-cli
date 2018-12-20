@@ -11,12 +11,13 @@ import (
 
 	"gopkg.in/alecthomas/kingpin.v1"
 
-	"frister.net/go/syno-cli/synoapi"
+	"github.com/toprch/syno-cli/synoapi"
 )
 
 var (
 	list            = kingpin.Command("list", "List shares")
 	lock            = kingpin.Command("lock", "Lock an encrypted volume")
+	logout          = kingpin.Command("logout", "Logout from session")
 	lockShareName   = lock.Arg("share name", "Name of the share to be locked").Required().String()
 	unlock          = kingpin.Command("unlock", "Unlock an encrypted volume")
 	unlockShareName = unlock.Arg("share name", "Name of the share to be unlocked").String()
@@ -46,6 +47,8 @@ func main() {
 		lockShare(client, *lockShareName)
 	case "unlock":
 		unlockShare(client, *unlockShareName, *unlockBatch)
+	case "logout":
+		logoutShare(client)
 	}
 }
 
@@ -62,6 +65,7 @@ func listShares(client *synoapi.Client) {
 		fmt.Fprintf(w, "%s\t%s\t%s\n", share.Name, share.Encryption, share.Description)
 	}
 	w.Flush()
+	logoutShare(client)
 }
 
 func lockShare(client *synoapi.Client, shareName string) {
@@ -69,6 +73,8 @@ func lockShare(client *synoapi.Client, shareName string) {
 	if err != nil {
 		log.Fatalf("Locking failed: %v", err)
 	}
+	logoutShare(client)
+
 }
 
 type ShareInfo struct {
@@ -109,6 +115,8 @@ func unlockShare(client *synoapi.Client, shareName string, batch bool) {
 			return
 		}
 	}
+	logoutShare(client)
+
 }
 
 func readPassword() string {
@@ -121,4 +129,11 @@ func readPassword() string {
 		log.Fatalf("Failed to read password")
 	}
 	return trimmed_pass
+}
+
+func logoutShare(client *synoapi.Client) {
+	err := client.Logout()
+	if err != nil {
+		log.Fatalf("Logout failed: %v", err)
+	}
 }

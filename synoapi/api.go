@@ -50,6 +50,19 @@ func (c *Client) Login(user string, password string) error {
 	return err
 }
 
+func (c *Client) Logout() error {
+	resp := LoginResponse{synoBaseResponse: synoBaseResponse{}}
+	err := c.request("auth.cgi", "SYNO.API.Auth", "3", "logout", nil, &resp)
+
+	if err != nil {
+		return err
+	}
+
+	log.Printf("synoapi.Client.Logout: Logout successful: ", c.sid)
+
+	return err
+}
+
 type Share struct {
 	Description string `json:"desc"`
 	Encryption  EncryptionStatus
@@ -119,7 +132,7 @@ func (c *Client) request(path string, api string, api_version string, method str
 	}
 	url := fmt.Sprintf("%s/%s?%s", c.api_base, path, p.Encode())
 
-	log.Printf("synoapi.Client: GET %s", url)
+	log.Printf("synoapi.Client: GET %s/%s", c.api_base, path)
 	resp, err := http.Get(url)
 	if err != nil {
 		return NewClientError("HTTP request failed", err)

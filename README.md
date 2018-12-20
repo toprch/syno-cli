@@ -70,9 +70,8 @@ It's just an array of objects with a name and a password attribute:
 
 ## Limitations
 
-* syno-cli logs the user in, but not out, so the session id is still valid after it quits.
 * The API sometimes returns error 119. No idea why, a retry helps.
-* There's still a lot of debug output, including all HTTP requests including credentials.
+* There's still a lot of debug output, including all HTTP requests including credentials. # Partly reduced
 
 ## Synology API documentation
 
